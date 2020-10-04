@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import random
 import math
 import sys
@@ -8,10 +9,7 @@ from brute_force import execute_brute_force
 from DpR import execute_DpR
 from utils import GRID_SIZE
 
-ALGO = "BF" #sys.argv[1] # Algo à utiliser DPR ou BF
-FILE = "ex1000.txt" #sys.arg[2] #Nom du fichier ou on va extraire les points
-#NB_POINTS = int(sys.argv[2]) # Nombre de points à générer
-PATH = "../tp1-A20/"
+PATH = "../Echantillons/"
 
 '''
 Un point est représenté par un tuple (position_x, position_y)
@@ -34,20 +32,28 @@ compatible avec ce code (par exemple l'utilisation de flag -e, -a, (p et -t)).
 --------------------------------------------------------------------
  '''
 
-def main(algo, file):
-    POINTS = generate_points(file)
+def main(argv):
+
+    POINTS = generate_points(argv[1])
     sorted_points_x = sorted(POINTS, key=lambda x: x[0])
     sorted_points_y = sorted(POINTS, key=lambda x: x[1])
     
-    if algo == "BF":
+    if argv[0] == "BF":
         #Exécuter l'algorithme force brute
-        time_BF = execute_brute_force(sorted_points_x)
-        print("Temps : ", time_BF)
+        time_BF, min_DistanceBF = execute_brute_force(sorted_points_x)
+        if '-t' in argv:
+            print("Temps : ", time_BF)
+        if '-p' in argv:
+            print("Plus petite distance: ", min_DistanceBF)
     
-    elif algo == "DPR":
+    elif argv[0] == "DPR":
         #Exécuter l'algorithme Diviser pour régner
         SEUIL_DPR = 3
-        time_DPR = execute_DpR(sorted_points_x, sorted_points_y, SEUIL_DPR)
-        print("Temps : ", time_DPR)
+        time_DPR, min_DistanceDPR = execute_DpR(sorted_points_x, sorted_points_y, SEUIL_DPR)
+        if '-t' in argv:
+            print("Temps : ", time_DPR)
+        if '-p' in argv:
+            print("Plus petite distance: ", min_DistanceDPR)
 
-main(ALGO, FILE)
+if __name__ == "__main__":
+    main(sys.argv[1:])
