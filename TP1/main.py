@@ -22,6 +22,7 @@ def generate_points(FILE):
         mylist = [tuple(map(float, i.split(' '))) for i in f]
     return mylist
 
+
 '''
 --------------------------------------------------------------------
 ATTENTION : Dans votre code vous devez utiliser le générateur gen.py
@@ -49,6 +50,14 @@ def main(argv):
     elif argv[0] == "DPR":
         #Exécuter l'algorithme Diviser pour régner
         SEUIL_DPR = 3
+        time_DPR, min_DistanceDPR = execute_DpR(sorted_points_x, sorted_points_y, SEUIL_DPR)
+        if '-t' in argv:
+            print("Temps : ", time_DPR)
+        if '-p' in argv:
+            print("Plus petite distance: ", min_DistanceDPR)
+    
+    elif argv[0] == "seuil":
+        SEUIL_DPR = 4
         time_DPR, min_DistanceDPR = execute_DpR(sorted_points_x, sorted_points_y, SEUIL_DPR)
         if '-t' in argv:
             print("Temps : ", time_DPR)

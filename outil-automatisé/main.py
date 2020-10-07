@@ -5,6 +5,7 @@ import sys
 import time
 import csv
 import csv
+import numpy as np
 
 from brute_force import execute_brute_force
 from DpR import execute_DpR
@@ -22,6 +23,61 @@ def generate_points(FILE):
         next(f)
         mylist = [tuple(map(float, i.split(' '))) for i in f]
     return mylist
+
+'''
+Fonction qui va permettre de lire le data de csv
+'''
+def read_data(file):
+    brutefore_array100 = []
+    brutefore_array1k = []
+    brutefore_array10k = []
+    brutefore_array100k = []
+
+    DPR_array100 = []
+    DPR_array1k = []
+    DPR_array10k = []
+    DPR_array100k = []
+
+    with open(file, 'r') as file:
+        next(file)
+        reader = csv.reader(file)
+        for row in reader:
+            if "BF" in row[0]:
+                if "100_" in row[0]:
+                    brutefore_array100.append(float(row[0].split("|")[2]))
+                elif "1k" in row[0]:
+                    brutefore_array1k.append(float(row[0].split("|")[2]))
+                elif "10k" in row[0]:
+                    brutefore_array10k.append(float(row[0].split("|")[2]))
+                elif "100k" in row[0]:
+                    brutefore_array100k.append(float(row[0].split("|")[2]))
+            elif "DPR" in row[0]:
+                if "100_" in row[0]:
+                    DPR_array100.append(float(row[0].split("|")[2]))
+                elif "1k" in row[0]:
+                    DPR_array1k.append(float(row[0].split("|")[2]))
+                elif "10k" in row[0]:
+                    DPR_array10k.append(float(row[0].split("|")[2]))
+                elif "100k" in row[0]:
+                    DPR_array100k.append(float(row[0].split("|")[2]))
+
+    method = ["brute","DPR"]
+    lengthOfdata = ["100","1k","10k","100k"]
+    average_brute = [sum(brutefore_array100) / len(brutefore_array100), sum(brutefore_array1k) / len(brutefore_array1k), sum(brutefore_array10k) / len(brutefore_array10k), sum(brutefore_array100k) / len(brutefore_array100k)]
+    average_DPR = [sum(DPR_array100) / len(DPR_array100), sum(DPR_array1k) / len(DPR_array1k), sum(DPR_array10k) / len(DPR_array10k), sum(DPR_array100k) / len(DPR_array100k)]
+    table = []
+    for i in range(8):
+        if i < 4:
+            table.append([method[0], lengthOfdata[i], average_brute[i]])
+        else:
+            table.append([method[1], lengthOfdata[i-4], average_DPR[i-4]])
+    
+    with open("table.csv", "w") as f:
+        f.write("methode" + "," + "taille" + "," + "temps" + "\n")
+        for i in range(len(table)):
+            f.write(table[i][0] + "," + table[i][1] + "," + str(table[i][2]) + "\n")
+
+
 
 '''
 --------------------------------------------------------------------
@@ -63,22 +119,23 @@ def main(argv):
         writer.writerow(row)
 
 if __name__ == "__main__":
-    samples=["ex100_","ex1k_","ex10k_","ex100k_"]
-    first_row=["method","file name", "time", "result"]
+    read_data("/Users/mouradyounes/AUT2020_V1/INF8775/INF8775/outil-automatisé/result.csv")
+    # samples=["ex100_","ex1k_","ex10k_","ex100k_"]
+    # first_row=["method","file name", "time", "result"]
 
     
-    with open('result.csv', 'w', newline='') as file:
-        writer = csv.writer(file, delimiter='|')
-        writer.writerow(first_row)
-    for sample in samples:
-        for x in range(10):
-            i=x+1
-            filename=sample + str(i) + ".txt"
-            main(["BF",filename,'-t','-p'])
-    for sample in samples:
-        for x in range(10):
-            i=x+1
-            filename=sample + str(i) + ".txt"
-            main(["DPR",filename,'-t','-p'])
+    # with open('result.csv', 'w', newline='') as file:
+    #     writer = csv.writer(file, delimiter='|')
+    #     writer.writerow(first_row)
+    # for sample in samples:
+    #     for x in range(10):
+    #         i=x+1
+    #         filename=sample + str(i) + ".txt"
+    #         main(["BF",filename,'-t','-p'])
+    # for sample in samples:
+    #     for x in range(10):
+    #         i=x+1
+    #         filename=sample + str(i) + ".txt"
+    #         main(["DPR",filename,'-t','-p'])
 
-    print("end")
+    # print("end")
