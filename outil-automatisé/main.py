@@ -6,6 +6,10 @@ import time
 import csv
 import csv
 import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+import sys
 
 from brute_force import execute_brute_force
 from DpR import execute_DpR
@@ -23,6 +27,76 @@ def generate_points(FILE):
         next(f)
         mylist = [tuple(map(float, i.split(' '))) for i in f]
     return mylist
+
+'''
+Fonction qui calcule le test de puissance
+'''
+def test_puissance():
+    data = pd.read_csv("table.csv")
+
+    sortingNames = ["BF", "DPR", "seuil"]
+    colors = ["b", "r", "g"]
+    plt.clf()
+    fig = plt.figure()   
+    ax = fig.add_subplot(1,1,1)
+    ax.set_xlabel('log n')
+    ax.set_ylabel('log (temps)')
+    #Tests de puissances
+    for i in range(3):
+        x = np.array(np.log(data["taille"][(6*i):(6*i)+6]))
+        y = np.array(np.log(data["temps"][(6*i):(6*i)+6]))
+        ax.scatter(x, y, c = colors[i], label = data["methode"][(6*i)])
+        print(np.poly1d(np.polyfit(x, y, 1))(x))
+        ax.plot(x, np.poly1d(np.polyfit(x, y, 1))(x),c= colors[i])
+        print(np.polyfit(x, y, 1))
+        
+        ax.legend(loc="lower right")
+        plt.show()
+        fig.savefig("Puissance" + sortingNames[i])
+
+'''
+Fonction qui calcule le test de rapport
+'''
+def test_rapport():
+    data = pd.read_csv("table.csv")
+    data["temps"] = data["temps"]/data["taille"]
+    sortingNames = ["BF", "DPR", "seuil"]
+    colors = ["b", "r", "g"]
+    for i in range(3):
+        plt.clf()
+        fig = plt.figure()   
+        ax = fig.add_subplot(1,1,1)
+        x = np.array(data["taille"][(6*i):(6*i)+6])
+        y = np.array(data["temps"][(6*i):(6*i)+6])
+        ax.scatter(x, y, c = colors[i], label = data["methode"][(6*i)])
+        #ax.plot(x, np.poly1d(np.polyfit(x, y, 1))(x),c= colors[i])
+        print(np.polyfit(x, y, 1))
+    
+        ax.legend(loc="lower right")
+        plt.show()
+        fig.savefig("Rapport" + sortingNames[i])
+
+'''
+Fonction qui va calculer le test de constante
+'''
+def test_constante():
+    data = pd.read_csv("table.csv")
+    sortingNames = ["BF", "DPR", "seuil"]
+    colors = ["b", "r", "g"]
+
+    for i in range(3):
+        plt.clf()
+        fig = plt.figure()   
+        ax = fig.add_subplot(1,1,1)
+        x = np.array(data["taille"][(6*i):(6*i)+6])
+        y = np.array(data["temps"][(6*i):(6*i)+6])
+        ax.scatter(x, y, c = colors[i], label = data["methode"][(6*i)])
+        #ax.plot(x, np.poly1d(np.polyfit(x, y, 1))(x),c= colors[i])
+        print(np.polyfit(x, y, 1))
+    
+        ax.legend(loc="lower right")
+        plt.show()
+        fig.savefig("constante" + sortingNames[i])
 
 '''
 Fonction qui va permettre de lire le data de csv
@@ -94,7 +168,7 @@ def read_data(file):
                     seuil_array100k.append(float(row[0].split("|")[2]))                    
 
     method = ["brute","DPR","seuil"]
-    lengthOfdata = ["100","1k","10k","30k","50k","100k"]
+    lengthOfdata = ["100","1000","10000","30000","50000","100000"]
     average_brute = [sum(brutefore_array100) / len(brutefore_array100), sum(brutefore_array1k) / len(brutefore_array1k), sum(brutefore_array10k) / len(brutefore_array10k), sum(brutefore_array30k) / len(brutefore_array30k), sum(brutefore_array50k) / len(brutefore_array50k), sum(brutefore_array100k) / len(brutefore_array100k)]
     average_DPR = [sum(DPR_array100) / len(DPR_array100), sum(DPR_array1k) / len(DPR_array1k), sum(DPR_array10k) / len(DPR_array10k), sum(DPR_array30k) / len(DPR_array30k), sum(DPR_array50k) / len(DPR_array50k), sum(DPR_array100k) / len(DPR_array100k)]
     average_seuil = [sum(seuil_array100) / len(seuil_array100), sum(seuil_array1k) / len(seuil_array1k), sum(seuil_array10k) / len(seuil_array10k), sum(seuil_array30k) / len(seuil_array30k), sum(seuil_array50k) / len(seuil_array50k), sum(seuil_array100k) / len(seuil_array100k)]
@@ -105,7 +179,7 @@ def read_data(file):
         elif i < 12:
             table.append([method[1], lengthOfdata[i-6], average_DPR[i-6]])
         elif i < 18:
-            table.append([method[2], lengthOfdata[i-12], average_DPR[i-12]])            
+            table.append([method[2], lengthOfdata[i-12], average_seuil[i-12]])            
     
     with open("table.csv", "w") as f:
         f.write("methode" + "," + "taille" + "," + "temps" + "\n")
@@ -186,5 +260,6 @@ if __name__ == "__main__":
 ##            filename=sample + str(i) + ".txt"
 ##            main(["seuil",filename,'-t','-p'])
                 
-    read_data("../outil-automatisé/result.csv")
+    #read_data("/Users/mouradyounes/AUT2020_V1/INF8775/INF8775/outil-automatisé/result.csv")
+    test_constante()
     print("end")

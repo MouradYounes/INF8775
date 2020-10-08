@@ -18,6 +18,7 @@ for i in range(3):
     x = np.array(np.log(data["taille"][(6*i):(6*i)+6]))
     y = np.array(np.log(data["temps"][(6*i):(6*i)+6]))
     ax.scatter(x, y, c = colors[i], label = data["methode"][(6*i)])
+    print(np.poly1d(np.polyfit(x, y, 1))(x))
     ax.plot(x, np.poly1d(np.polyfit(x, y, 1))(x),c= colors[i])
     print(np.polyfit(x, y, 1))
     
