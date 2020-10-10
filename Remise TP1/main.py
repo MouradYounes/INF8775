@@ -72,7 +72,7 @@ def main(argv):
         
     elif argv[0].lower() == "seuil":
         #Exécuter l'algorithme Diviser pour régner avec un seuil déterminé expérimentalement
-        SEUIL_seuil = 20
+        SEUIL_seuil = 21
         time_seuil, min_Distanceseuil = execute_DpR(sorted_points_x, sorted_points_y, SEUIL_seuil)
         if '-t' in argv:
             print("Temps : ", time_seuil)
